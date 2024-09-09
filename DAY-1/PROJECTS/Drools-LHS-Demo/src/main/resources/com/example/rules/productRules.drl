@@ -1,0 +1,24 @@
+package com.example.rules
+import com.example.model.Product
+
+rule "Discount on Electronics"
+when
+	$product: Product(type=="Electronics", price>1000)
+then
+	$product.setPrice($product.getPrice()-100);
+	System.out.println("Applied discount on Electronics: "+$product);
+end
+
+rule "Check Availability"
+when
+	$product: Product(available == false)
+then
+	System.out.println("Product Not Available: "+$product);
+end
+
+rule "Promote Cheap Products"
+when
+	$product: Product(price<500, available == true)
+then
+	System.out.println("promoting cheap product: "+$product);
+end
