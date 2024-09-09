@@ -1,0 +1,42 @@
+package com.example.rules
+
+import com.example.model.Order
+
+rule "Discount on Cheap Electronics"
+salience 200
+no-loop
+when
+    $product: Product(type == "Electronics", price < 500)
+then
+    $product.setPrice($product.getPrice() + 100);
+    update($product)
+    System.out.println("Applied discount on Electronics: " + $product);
+end
+
+//rule "Discount on Expensive Electronics"
+//salience 200
+//no-loop
+//when
+//    $product: Product(type == "Electronics", price > 500)
+//then
+//    $product.setPrice($product.getPrice() - 100);
+//    update($product)
+//    System.out.println("Applied discount on Electronics: " + $product);
+//end
+
+rule "Check Availability"
+salience 100
+when
+    $product: Product(available == false)
+then
+    System.out.println("Product not available: " + $product);
+end
+
+
+rule "Promote Cheap Product"
+salience 100
+when
+    $product: Product(price <= 500, available == true)
+then
+    System.out.println("Promoting cheap product: " + $product);
+end

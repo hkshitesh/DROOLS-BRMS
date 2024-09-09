@@ -1,0 +1,43 @@
+package com.example.rules
+
+import com.example.model.Order
+
+rule "VIP Customer High Value Order Discount"
+when
+    $order: Order(customerType == "VIP", orderAmount > 500)
+then
+    $order.setOrderAmount($order.getOrderAmount() * 0.8);
+    System.out.println("VIP Customer Discount Applied: " + $order);
+end
+
+rule "Regular Customer Low Value Order Discount"
+when
+    $order: Order(customerType == "Regular", orderAmount > 200)
+then
+    $order.setOrderAmount($order.getOrderAmount() * 0.9);
+    System.out.println("Regular Customer Discount Applied: " + $order);
+end
+
+
+rule "Special Handling for Electronics"
+when
+    $order: Order(productCategory == "Electronics", orderAmount > 1000)
+then
+    System.out.println("Special Handling for Electronics: " + $order);
+end
+
+rule "No Special Handling for Clothing"
+when
+    $order: Order(productCategory == "Clothing", orderAmount > 150)
+then
+    $order.setOrderAmount($order.getOrderAmount() * 0.95);
+    System.out.println("Clothing Discount Applied: " + $order);
+end
+
+rule "Process All Orders"
+when
+    $order: Order()
+then
+    $order.setProcessed(true);
+    System.out.println("Order Processed " + $order);
+end
