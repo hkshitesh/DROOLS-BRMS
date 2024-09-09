@@ -1,0 +1,37 @@
+package com.example.rules
+
+import com.example.model.Customer
+
+rule "Upgrade to Gold Membership"
+
+when 
+	$customer: Customer(loyaltyPoints>1000, membership == "Silver")
+then
+	$customer.setMembership("Gold");
+	System.out.println("Upgraded to Gold Membership: "+$customer);
+	update($customer);
+end
+
+rule "Add Loyalty Points"
+when 
+	$customer: Customer(membership == "Gold")
+then
+	$customer.setLoyaltyPoints($customer.getLoyaltyPoints()+100);
+	System.out.println("Added 100 Loyality Points to Gold Member: "+$customer);
+	update($customer);
+end
+
+rule "Insert a new Customer"
+when 
+	$customer: Customer(loyaltyPoints<500)
+then
+	Customer newCustomer = new Customer("newCustomer",300,"Bronze");	
+	System.out.println("Inserted New customer: "+newCustomer);
+	sendEmail(newCustomer);
+	insert($customer);
+end
+
+function void sendEmail(Customer customer)
+{
+	System.out.println("Sending Email to New Customer: "+customer.getName());
+}
