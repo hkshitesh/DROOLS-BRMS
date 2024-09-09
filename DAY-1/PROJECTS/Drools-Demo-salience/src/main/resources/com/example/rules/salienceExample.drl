@@ -1,0 +1,30 @@
+package com.example.rules
+import com.example.Orders
+
+
+rule "VIP Customer Discount"
+	salience 100
+	when
+		$order: Orders(customerType == "VIP", totalAmount>0)
+	then
+		System.out.println("Applying 20% discount for VIP Customer");
+		$order.setTotalAmount($order.getTotalAmount()*0.8);
+end
+
+rule "Regular Customer Discount"
+	salience 150
+	when
+		$order: Orders(customerType == "Regular", totalAmount>0)
+	then
+		System.out.println("Applying 10% discount for Regular Customer");
+		$order.setTotalAmount($order.getTotalAmount()*0.9);
+end
+
+rule "New Customer Discount"
+	salience 200
+	when
+		$order: Orders(customerType == "New", totalAmount>0)
+	then
+		System.out.println("Applying 5% discount for New Customer");
+		$order.setTotalAmount($order.getTotalAmount()*0.95);
+end
