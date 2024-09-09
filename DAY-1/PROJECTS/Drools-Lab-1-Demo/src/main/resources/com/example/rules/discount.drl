@@ -1,0 +1,10 @@
+package com.example.rules
+import com.example.model.Customer
+
+rule "Apply Discount to Premium Members"
+when 
+	$customer: Customer(membership == "Premium")
+then
+	$customer.setDiscount(10);
+	System.out.println("Applied 10% discount to premium customer: "+$customer.getName());
+end
