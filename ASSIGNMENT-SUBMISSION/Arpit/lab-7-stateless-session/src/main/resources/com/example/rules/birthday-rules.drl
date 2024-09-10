@@ -1,0 +1,21 @@
+package com.example.rules
+
+import com.example.model.Person;
+import com.example.model.BirthdayGreeting;
+
+rule "Person has Birthday"
+when
+    $person : Person(age >= 18, hasBirthdayPassed == false)
+then
+    $person.setHasBirthdayPassed(true);
+    insert(BirthdayGreeting.builder().message("Happy Birthday " + $person.getName()).build());
+    System.out.println($person.getName() + " has a birthday today.");
+    update($person)
+end
+
+rule "Birthday Message"
+when
+    $rule : BirthdayGreeting(message != null)
+then
+    System.out.println($rule.getMessage());
+end

@@ -10,9 +10,6 @@ import org.kie.api.definition.type.PropertyReactive;
 @Setter
 @ToString
 @Builder
-@PropertyReactive
-public class Product {
-    private final String name;
-    private double price;
-    private final String category;
+public class BirthdayGreeting {
+    private final String message;
 }

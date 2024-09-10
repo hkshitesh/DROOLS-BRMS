@@ -10,9 +10,7 @@ import org.kie.api.definition.type.PropertyReactive;
 @Setter
 @ToString
 @Builder
-@PropertyReactive
-public class Product {
-    private final String name;
-    private double price;
-    private final String category;
+public class TemperatureSensor {
+    private final String sensorId;
+    private final double temperature;
 }
