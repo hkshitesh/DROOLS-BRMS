@@ -1,0 +1,73 @@
+package com.example.rules;
+import com.example.*;
+
+rule "Validate Order Amount"
+    agenda-group "validation"
+when
+    $order : Order( totalAmount >= 50 )
+then
+    $order.setValid(true);
+    System.out.println("Order " + $order.getId() + " has a valid amount.");
+    update($order);
+end
+
+rule "Check Promotion Eligibility"
+    agenda-group "validation"
+when
+    $order : Order( totalAmount >= 100 )
+    $customer : Customer()
+then
+    System.out.println("Customer " + $customer.getName() + " is eligible for a promotion.");
+end
+
+rule "Process Payment"
+    agenda-group "processing"
+when
+    $order : Order(valid == true )
+    $payment : Payment( orderId == $order.getId(), Paid == false )
+then
+    $payment.setPaid(true);
+    $order.setProcessed(true);
+    System.out.println("Payment processed for order " + $order.getId());
+    update($payment);
+    update($order);
+end
+
+rule "Apply Discount"
+    agenda-group "processing"
+when
+    $order : Order(totalAmount >= 100 )
+    $payment : Payment( orderId == $order.getId(), Paid == true )
+then
+    System.out.println("Discount applied to order " + $order.getId());
+end
+
+rule "Update Inventory"
+    agenda-group "processing"
+    no-loop true
+when
+    $inventory : Inventory( productId == "product-123", quantity > 0 )
+then
+    $inventory.reduceQuantity(1);
+    System.out.println("Inventory updated for product " + $inventory.getProductId());
+    update($inventory);
+end
+
+rule "Notify Customer"
+    agenda-group "notification"
+when
+    $order : Order( Processed == true )
+    $customer : Customer( Notified == false )
+then
+    $customer.setNotified(true);
+    System.out.println("Customer " + $customer.getName() + " notified for order " + $order.getId());
+    update($customer);
+end
+
+rule "Send Shipping Confirmation"
+    agenda-group "notification"
+when
+    $order : Order( Processed == true )
+then
+    System.out.println("Shipping confirmation sent for order " + $order.getId());
+end
