@@ -1,0 +1,23 @@
+package com.example.rules
+
+import com.example.model.Order
+import com.example.model.Product
+
+rule "Calculate Total Price"
+when
+    $order: Order($product: product)
+then
+    $order.setTotalPrice($order.getQuantity() * $product.getPrice());
+    System.out.println("Calculate total: " + $order);
+    update($order)
+end
+
+
+rule "Update product price"
+when
+    $product: Product(price <= 200)
+then
+    $product.setPrice($product.getPrice() + 50);
+    System.out.println("Updated Product Price: " + $product);
+    update($product)
+end
