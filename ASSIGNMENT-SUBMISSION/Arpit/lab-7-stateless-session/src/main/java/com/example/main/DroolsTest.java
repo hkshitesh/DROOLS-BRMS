@@ -5,8 +5,11 @@ import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class DroolsTest {
+    private static final int LOOP_TIMES = 5;
+
     public static void main(String[] args) {
         var ks = KieServices.Factory.get();
         var kContainer = ks.getKieClasspathContainer();
@@ -32,14 +35,10 @@ public class DroolsTest {
         kSession.insert(person2);
         kSession.insert(person3);
 
-        kSession.fireAllRules();
-
-        person1.setAge(20);
-        kSession.update(kSession.getFactHandle(person1), person1);
-        person2.setAge(20);
-        kSession.update(kSession.getFactHandle(person2), person2);
-
-        kSession.fireAllRules();
+        IntStream.range(0, LOOP_TIMES).forEach( i -> {
+            System.out.println("\nRound " + (i+1) + "/" + LOOP_TIMES);
+            kSession.fireAllRules();
+        });
 
         kSession.dispose();
     }
@@ -51,18 +50,9 @@ public class DroolsTest {
         var person2 = Person.builder().name("Bob").age(17).build();
         var person3 = Person.builder().name("Charlie").age(26).build();
 
-        System.out.println(person1);
-        System.out.println(person2);
-        System.out.println(person3);
-
-
-        kSession.execute(List.of(person1, person2, person3));
-
-        System.out.println(person1);
-        System.out.println(person2);
-        System.out.println(person3);
-
-        person1.setAge(20);
-        kSession.execute(person1);
+        IntStream.range(0, LOOP_TIMES).forEach( i -> {
+            System.out.println("\n\nRound " + (i+1) + "/" + LOOP_TIMES);
+            kSession.execute(List.of(person1, person2, person3));
+        });
     }
 }

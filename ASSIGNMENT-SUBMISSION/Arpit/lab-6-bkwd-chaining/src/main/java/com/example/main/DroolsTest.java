@@ -23,7 +23,6 @@ public class DroolsTest {
         kSession.insert(smokeSensor1);
         kSession.insert(smokeSensor2);
 
-
         kSession.fireAllRules();
 
         kSession.getQueryResults("IsHighTemperature1").forEach(result -> {
