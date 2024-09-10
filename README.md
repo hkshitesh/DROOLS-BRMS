@@ -53,3 +53,50 @@ public class Person {
 }
 
 
+# BirthdayRules.java
+
+public class BirthdayRule {
+    private String message;
+
+    public BirthdayRule(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    @Override
+    public String toString() {
+        return "BirthdayRule{message='" + message + "'}";
+    }
+}
+
+
+# birthdayRules.drl
+
+package com.example.rules;
+import com.example.model.Person;
+import com.example.model.BirthdayRule;
+
+rule "Person has Birthday"
+when
+    $person : Person(age > 18, hasBirthdayPassed == false)
+then
+    $person.setHasBirthdayPassed(true);
+    insert(new BirthdayRule($person.getName() + " has a birthday today!"));
+    System.out.println($person.getName() + " has a birthday today.");
+end
+
+rule "Birthday Message"
+when
+    $rule : BirthdayRule(message != null)
+then
+    System.out.println($rule.getMessage());
+end
+
+
