@@ -1,0 +1,19 @@
+package com.example.rules;
+
+import com.example.model.Vehicle;
+
+rule "Update Vehicle Status"
+when
+    $vehicle : Vehicle( mileage > 10000, status == "Active" )
+then
+    $vehicle.setStatus("Needs Service");
+    update($vehicle);
+    System.out.println($vehicle.getId() + " status updated to 'Needs Service'.");
+end
+
+rule "Check Vehicle Status"
+when
+    $vehicle : Vehicle( status == "Needs Service" )
+then
+    System.out.println($vehicle.getId() + " requires servicing.");
+end
