@@ -1,0 +1,29 @@
+package com.example.rules;
+
+import com.example.model.Order;
+
+// This rule checks the status of the order every 3 seconds
+rule "Check Order Status"
+    timer(int: 3s)
+    when
+        $order : Order(processed == false)
+    then
+        System.out.println("[CHECK] Order " + $order.getId() + " is still not processed.");
+end
+
+rule "Check Order process Status"
+    timer(int: 3s)
+    when
+        $order : Order(processed == true)
+    then
+        System.out.println("[CHECK] Order " + $order.getId() + " is  processed.");
+end
+
+// This rule triggers after 10 seconds if the order is not processed
+rule "Alert Unprocessed Order"
+    timer(int: 10s)
+    when
+        $order : Order(processed == false)
+    then
+        System.out.println("[ALERT] Order " + $order.getId() + " is still not processed after 10 seconds!");
+end

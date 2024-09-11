@@ -1,0 +1,18 @@
+package com.example.rules;
+import com.example.TemperatureSensor;
+rule "Temperature Alert"
+    when
+        $sensor : TemperatureSensor(temperature > 75)
+    then
+        System.out.println("ALERT: High temperature detected by sensor " + $sensor.getSensorId() 
+                            + " with temperature " + $sensor.getTemperature());
+end
+
+rule "Delayed Temperature Alert"
+    duration(5s)
+    when
+        $sensor : TemperatureSensor(temperature > 75)
+    then
+        System.out.println("ALERT: Temperature has been high for over 5 seconds! Sensor: " 
+                            + $sensor.getSensorId() + " Temperature: " + $sensor.getTemperature());
+end
