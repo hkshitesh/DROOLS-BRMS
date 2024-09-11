@@ -1,0 +1,35 @@
+package com.example.rules;
+
+import com.example.model.Order;
+import com.example.model.Discount;
+
+// Rule to apply a discount to orders with a total amount >= 100
+rule "Apply Discount to High Value Orders"
+    when
+        $order : Order(totalAmount >= 100, processed == false)
+    then
+        Discount discount = new Discount($order.getId(), 10.0);
+        insert(discount);  // Insert a new discount fact
+        System.out.println("Discount applied to order " + $order.getId());
+end
+
+// Rule to process the order after applying the discount
+rule "Process Order"
+    when
+        $order : Order(processed == false)
+        $discount : Discount(orderId == $order.getId())
+    then
+        $order.setProcessed(true);  // Mark the order as processed
+        update($order);  // Update the order fact in the session
+        System.out.println("Order " + $order.getId() + " is now processed.");
+end
+
+// Rule to remove discount from the session after processing
+rule "Remove Discount After Processing"
+    when
+        $discount : Discount()
+        $order : Order(id == $discount.getOrderId(), processed == true)
+    then
+        retract($discount);  // Remove the discount fact from the session
+        System.out.println("Discount for order " + $order.getId() + " retracted.");
+end
