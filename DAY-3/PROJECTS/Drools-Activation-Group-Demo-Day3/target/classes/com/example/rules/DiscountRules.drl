@@ -1,0 +1,35 @@
+package com.example.rules;
+
+import com.example.model.Person;
+
+global java.util.List resultList;
+
+// Rule for senior citizen discount
+rule "Senior Citizen Discount"
+activation-group "discount-group" // Part of an activation group
+salience 100
+when
+    $person : Person(age > 60)
+then
+    resultList.add($person.getName() + " gets Senior Citizen Discount.");
+end
+
+// Rule for adult discount
+rule "Adult Discount"
+activation-group "discount-group" // Part of an activation group
+salience 20
+when
+    $person : Person(age >= 18 && age <= 60)
+then
+    resultList.add($person.getName() + " gets Adult Discount.");
+end
+
+// Rule for child discount
+rule "Child Discount"
+activation-group "discount-group" // Part of an activation group
+salience 30
+when
+    $person : Person(age < 18)
+then
+    resultList.add($person.getName() + " gets Child Discount.");
+end
