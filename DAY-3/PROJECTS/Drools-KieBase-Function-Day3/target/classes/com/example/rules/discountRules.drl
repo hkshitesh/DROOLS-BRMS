@@ -1,0 +1,18 @@
+package com.example.rules;
+
+import com.example.model.*;
+
+function boolean isEligibleForDiscount(Customer customer) {
+    return customer.getPurchaseAmount() > 100;
+}
+
+rule "Apply Discount"
+when
+    $customer : Customer()
+then
+    if (isEligibleForDiscount($customer)) {
+        System.out.println($customer.getName() + " is eligible for a discount.");
+    } else {
+        System.out.println($customer.getName() + " is not eligible for a discount.");
+    }
+end
