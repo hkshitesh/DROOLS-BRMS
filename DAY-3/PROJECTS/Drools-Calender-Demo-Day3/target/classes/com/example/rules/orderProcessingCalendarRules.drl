@@ -1,0 +1,12 @@
+package com.example.rules;
+
+import com.example.model.Order;
+
+rule "Process Order During Business Hours"
+    calendars "businessHours"
+    when
+        $order : Order(processed == false)
+    then
+        $order.setProcessed(true);
+        System.out.println("Order " + $order.getId() + " processed during business hours.");
+end
