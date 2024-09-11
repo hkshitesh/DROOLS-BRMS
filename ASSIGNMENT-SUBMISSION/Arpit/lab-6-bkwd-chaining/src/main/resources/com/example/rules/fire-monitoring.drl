@@ -1,0 +1,40 @@
+package com.example.rules
+
+import com.example.model.TemperatureSensor
+import com.example.model.SmokeSensor
+import com.example.model.FireHazard
+
+query IsHighTemperature1()
+    $temperatureSensor: TemperatureSensor(temperature > 70)
+end
+
+
+query IsHighTemperature(TemperatureSensor $temperatureSensor )
+    TemperatureSensor(temperature > 70, this == $temperatureSensor)
+end
+
+query IsHighSmokeLevel(SmokeSensor $smokeSensor)
+    SmokeSensor(smokeLevel > 5, this == $smokeSensor)
+end
+
+rule "Infer fire hazard"
+when
+    IsHighTemperature($temperatureSensor;)
+    IsHighSmokeLevel($smokeSensor;)
+then
+    FireHazard hazard = FireHazard.builder()
+                                  .smokeSensorId($smokeSensor.getSensorId())
+                                  .temperatureSensorId($temperatureSensor.getSensorId())
+                                  .build();
+    System.out.println("Fire!!!");
+    insert(hazard);
+end
+
+rule "Alert fire"
+when
+    $fireHazard: FireHazard()
+then
+    System.out.println("Fire alert from temperature sensor: " + $fireHazard.getTemperatureSensorId() +
+                       " and smoke sensor: " + $fireHazard.getSmokeSensorId());
+end
+

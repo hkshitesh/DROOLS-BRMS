@@ -1,0 +1,40 @@
+package com.example.rules
+
+import com.example.model.Person;
+import com.example.model.PersonCopy;
+import com.example.model.BirthdayGreeting;
+
+rule "Insert Person Copy"
+when
+    $person: Person()
+    not PersonCopy(name == $person.name)
+then
+    System.out.println("Person " + $person.getName() + " does not exist. Creating...");
+    insert(PersonCopy.copyOf($person));
+end
+
+rule "Person has Birthday"
+when
+    $person : PersonCopy(age >= 18, hasBirthdayPassed == false)
+then
+    $person.setHasBirthdayPassed(true);
+    insert(BirthdayGreeting.builder().message("Happy Birthday " + $person.getName()).build());
+    System.out.println($person.getName() + " has a birthday today.");
+    update($person)
+end
+
+rule "Person doesn't have Birthday"
+when
+    $person : PersonCopy(age < 18, hasBirthdayPassed == false)
+then
+    $person.setAge(18);
+    System.out.println($person.getName() + " age updated to 18.");
+    update($person)
+end
+
+rule "Birthday Message"
+when
+    $rule : BirthdayGreeting(message != null)
+then
+    System.out.println($rule.getMessage());
+end

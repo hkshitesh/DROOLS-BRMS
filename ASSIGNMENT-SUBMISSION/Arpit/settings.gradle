@@ -1,6 +1,12 @@
 rootProject.name = 'drools-lab'
 
-include 'lab-1'
-include 'lab-2'
-include 'assignment-1'
+include ('lab-1',
+        'lab-2',
+        'lab-3',
+        'lab-4-salience',
+        'lab-5-fwd-chaining',
+        'lab-6-bkwd-chaining',
+        'lab-7-stateless-session',
+        'lab-8-agenda-group',
+        'assignment-1')
 

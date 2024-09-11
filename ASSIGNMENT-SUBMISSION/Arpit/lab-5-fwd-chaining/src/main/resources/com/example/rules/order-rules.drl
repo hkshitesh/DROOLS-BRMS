@@ -1,0 +1,47 @@
+package com.example.rules
+
+import com.example.model.Order
+import com.example.model.Product
+
+rule "Calculate Total Price"
+when
+    $order: Order($product: product)
+then
+    $order.setTotalPrice($order.getQuantity() * $product.getPrice());
+    System.out.println("Calculate total: " + $order);
+    update($order)
+end
+
+rule "Apply 10% discount"
+when
+    $order: Order(totalPrice > 300, discountApplied == false)
+then
+    $order.setTotalPrice($order.getTotalPrice() * 0.9);
+    $order.setDiscountApplied(true);
+    System.out.println("Discount Applied: " + $order);
+    update($order)
+end
+
+rule "Mark as low value order"
+when
+    $order: Order(totalPrice <= 300)
+then
+    System.out.println("Low Value: " + $order);
+end
+
+rule "Mark as high value order"
+when
+    $order: Order(totalPrice > 300)
+then
+    System.out.println("High Value: " + $order);
+end
+
+rule "Update product price"
+no-loop
+when
+    $product: Product(price <= 200)
+then
+    $product.setPrice($product.getPrice() + 50);
+    System.out.println("Updated Product Price: " + $product);
+    update($product)
+end
