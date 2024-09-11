@@ -1,0 +1,28 @@
+package com.example.rules;
+
+import com.example.model.Person;
+
+global java.util.List resultList;
+
+query "FindSeniorCitizens"
+    Person(age > 60)
+end
+
+rule "Determine Eligibility for Discount"
+when
+    $person : Person()  // This will match any Person object in working memory
+    not(FindSeniorCitizens())  // Only apply this rule if the query does not find a match
+then
+    $person.setEligibleForDiscount(false);  // If not found, not eligible
+    resultList.add($person.getName() + " is not eligible for senior citizen discount.");
+end
+
+
+rule "Eligibility for Discount"
+when
+    $person : Person()  // This will match any Person object in working memory
+    (FindSeniorCitizens())  // Only apply this rule if the query does not find a match
+then
+    $person.setEligibleForDiscount(true);  // If not found, not eligible
+    resultList.add($person.getName() + " is eligible for senior citizen discount.");
+end
