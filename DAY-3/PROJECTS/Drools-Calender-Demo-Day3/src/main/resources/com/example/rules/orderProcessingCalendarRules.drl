@@ -1,6 +1,6 @@
-package com.example.rules;
+package com.example.rules
 
-import com.example.model.Order;
+import com.example.model.Order
 
 rule "Process Order During Business Hours"
     calendars "businessHours"
@@ -9,4 +9,12 @@ rule "Process Order During Business Hours"
     then
         $order.setProcessed(true);
         System.out.println("Order " + $order.getId() + " processed during business hours.");
+end
+
+rule "Process Order Outside Business Hours"
+    calendars "nonBusinessHours"
+    when
+        $order : Order(processed == false)
+    then
+        System.out.println("Order " + $order.getId() + " not processed outside business hours.");
 end
