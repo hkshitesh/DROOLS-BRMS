@@ -1,0 +1,31 @@
+package com.example.rules
+
+import com.example.model.User
+
+rule "Validate Username"
+when
+    $user : User(username matches "[a-zA-Z0-9_]{5,15}")
+then
+    System.out.println($user.getUsername() + " has a valid username.");
+end
+
+rule "Validate Email"
+when
+    $user : User(email matches "^[\\w.%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")
+then
+    System.out.println($user.getEmail() + " has a valid email address.");
+end
+
+rule "Invalid Username"
+when
+    $user : User(username not matches "[a-zA-Z0-9_]{5,15}")
+then
+    System.out.println($user.getUsername() + " has an invalid username.");
+end
+
+rule "Invalid Email"
+when
+    $user : User(email not matches "^[\\w.%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")
+then
+    System.out.println($user.getEmail() + " has an invalid email address.");
+end
