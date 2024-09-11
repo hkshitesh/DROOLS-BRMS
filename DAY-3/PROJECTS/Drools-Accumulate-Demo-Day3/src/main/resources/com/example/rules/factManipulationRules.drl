@@ -1,0 +1,43 @@
+package com.example.rules
+
+import com.example.model.Product
+
+rule "Total Price of All Products"
+when
+    $totalPrice : Double() from accumulate(
+        Product($price : price),
+        sum($price)
+    )
+then
+    System.out.println("The total price of all products is $" + $totalPrice);
+end
+
+rule "Maximum Price of Products"
+when
+    $maxPrice : Double() from accumulate(
+        Product($price : price),
+        max($price)
+    )
+then
+    System.out.println("The maximum price of any product is $" + $maxPrice);
+end
+
+rule "Minimum Price of Products"
+when
+    $minPrice : Double() from accumulate(
+        Product($price : price),
+        min($price)
+    )
+then
+    System.out.println("The minimum price of any product is $" + $minPrice);
+end
+
+rule "Average Price of Products"
+when
+    $avgPrice : Double() from accumulate(
+        Product($price : price),
+        average($price)
+    )
+then
+    System.out.println("The average price of all products is $" + $avgPrice);
+end
