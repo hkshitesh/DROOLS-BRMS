@@ -1,0 +1,11 @@
+package com.example.rules;
+
+import com.example.model.Order;
+
+rule "Validate Order Amount"
+    when
+        $order : Order(totalAmount >= 100)
+    then
+        $order.setValid(true);
+        System.out.println("Order " + $order.getId() + " is valid.");
+end
