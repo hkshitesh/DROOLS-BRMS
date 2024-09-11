@@ -1,0 +1,77 @@
+package com.example.rules
+
+import com.example.*;
+
+rule "Validate Claim Amount"
+    agenda-group "validation"
+    salience 10
+    no-loop true
+when
+    $claim : Claim( amount > 0 )
+then
+    $claim.setValid(true);
+    System.out.println("Claim " + $claim.getId() + " is valid.");
+    update($claim);
+end
+
+rule "Check Customer Eligibility"
+    agenda-group "validation"
+    salience 20
+    no-loop true
+when
+    $customer : Customer( loyaltyYears >= 5 )
+then
+    $customer.setEligible(true);
+    System.out.println("Customer " + $customer.getName() + " is eligible for the claim.");
+    update($customer);
+end
+
+rule "Assess Claim Amount"
+    agenda-group "assessment"
+    salience 20
+    no-loop true
+when
+    $claim : Claim( Valid == true )
+    $assessment : Assessment( claimId == $claim.getId() )
+then
+    $claim.setAssessed(true);
+    System.out.println("Claim " + $claim.getId() + " assessed with amount: $" + $assessment.getAssessedAmount());
+    update($claim);
+end
+
+rule "Apply Loyalty Discount"
+    agenda-group "assessment"
+    salience 40
+    no-loop true
+when
+    $claim : Claim( Assessed == true )
+    $customer : Customer( Eligible == true )
+    $assessment : Assessment( claimId == $claim.getId(), assessedAmount > 0 )
+then
+    double discount = $assessment.getAssessedAmount() * 0.1; // 10% discount
+    $assessment.setAssessedAmount($assessment.getAssessedAmount() - discount);
+    System.out.println("Loyalty discount applied to claim " + $claim.getId() + ". New amount: $" + $assessment.getAssessedAmount());
+    update($assessment);
+end
+
+rule "Approve Claim"
+    agenda-group "approval"
+    salience 10
+    no-loop true
+when
+    $claim : Claim( Assessed == true )
+then
+    $claim.setApproved(true);
+    System.out.println("Claim " + $claim.getId() + " has been approved.");
+    update($claim);
+end
+
+rule "Final Approval Check"
+    agenda-group "approval"
+    salience 5
+when
+    $claim : Claim( Approved == true )
+    $assessment : Assessment( claimId == $claim.getId(), assessedAmount <= 1000 )
+then
+    System.out.println("Claim " + $claim.getId() + " passes the final approval check.");
+end
