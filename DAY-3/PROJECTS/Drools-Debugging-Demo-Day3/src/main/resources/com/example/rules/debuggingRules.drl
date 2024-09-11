@@ -1,0 +1,31 @@
+package com.example.rules;
+
+import com.example.model.Order;
+
+// Rule to apply a discount to orders with a total amount >= 100
+rule "Apply Discount to High Value Orders"
+    when
+        $order : Order(totalAmount >= 100, processed == false)
+    then
+        $order.setDiscount(-5.0);  // Apply a discount
+        System.out.println("[INFO] Discount applied to order " + $order.getId());
+        update($order);  // Make sure Drools knows the fact has changed
+end
+
+// Rule to process the order after applying the discount
+rule "Process Order"
+    when
+        $order : Order(discount > 0, processed == false)
+    then
+        $order.setProcessed(true);  // Mark the order as processed
+        System.out.println("[INFO] Order " + $order.getId() + " is now processed.");
+        update($order);  // Update the order fact in the session
+end
+
+// Rule that should not fire (for debugging purposes)
+rule "Debug Rule - Unexpected"
+    when
+        $order : Order(discount < 0)
+    then
+        System.out.println("[DEBUG] This rule should not fire.");
+end
